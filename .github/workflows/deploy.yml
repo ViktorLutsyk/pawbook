@@ -35,8 +35,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/pawbook:latest
-            ghcr.io/${{ github.repository_owner }}/pawbook:${{ github.sha }}
+            ghcr.io/viktorlutsyk/pawbook:latest
+            ghcr.io/viktorlutsyk/pawbook:${{ github.sha }}
 
       - name: Trigger Render deployment
         env:
