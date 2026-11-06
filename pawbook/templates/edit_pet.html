@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ pet.name }} — PawBook{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('pet_detail', pet_id=pet.id) }}">← Back to {{ pet.name }}</a>
+<div class="page-header">
+  <h1>Edit Profile</h1>
+  <p>Updating <strong>{{ pet.name }}</strong></p>
+</div>
+<div class="form-wrap">
+  <form method="post" enctype="multipart/form-data">
+    <p class="section-title">Pet Details</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Pet Name *</label>
+        <input type="text" name="name" required value="{{ pet.name }}">
+      </div>
+      <div class="form-group">
+        <label>Species *</label>
+        <select name="species" required>
+          <option value="dog"   {% if pet.species=='dog'   %}selected{% endif %}>🐕 Dog</option>
+          <option value="cat"   {% if pet.species=='cat'   %}selected{% endif %}>🐈 Cat</option>
+          <option value="other" {% if pet.species=='other' %}selected{% endif %}>🐾 Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Breed</label>
+        <input type="text" name="breed" value="{{ pet.breed or '' }}">
+      </div>
+      <div class="form-group">
+        <label>Age (years)</label>
+        <input type="number" name="age" step="0.5" min="0" max="30" value="{{ pet.age or '' }}">
+      </div>
+      <div class="form-group span2">
+        <label>Bio</label>
+        <textarea name="bio">{{ pet.bio or '' }}</textarea>
+      </div>
+      <div class="form-group span2">
+        <label>Replace Photo</label>
+        {% if pet.photo_url %}<img src="{{ pet.photo_url }}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:.5rem;display:block">{% endif %}
+        <label class="file-pill" for="photo">📎 Choose new photo…</label>
+        <input type="file" id="photo" name="photo" accept="image/*,video/*,.pdf">
+        <span id="fn" class="file-hint">Leave blank to keep current</span>
+      </div>
+    </div>
+
+    <p class="section-title" style="margin-top:1rem">Owner Details</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Owner Name</label>
+        <input type="text" name="owner_name" value="{{ pet.owner.name if pet.owner else '' }}">
+      </div>
+      <div class="form-group">
+        <label>Owner Email</label>
+        <input type="email" name="owner_email" value="{{ pet.owner.email if pet.owner else '' }}">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" name="owner_phone" value="{{ pet.owner.phone if pet.owner else '' }}">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+      <a href="{{ url_for('pet_detail', pet_id=pet.id) }}" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+<script>document.getElementById('photo').onchange=function(){document.getElementById('fn').textContent=this.files[0]?.name||'';}</script>
+{% endblock %}

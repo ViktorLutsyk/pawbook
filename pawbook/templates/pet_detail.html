@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ pet.name }} — PawBook{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('index') }}">← Back to Directory</a>
+<div class="detail">
+  <div>
+    {% if pet.photo_url %}
+      <img class="detail-photo" src="{{ pet.photo_url }}" alt="{{ pet.name }}">
+    {% else %}
+      <div class="detail-placeholder">{{ pet.species_emoji() }}</div>
+    {% endif %}
+  </div>
+  <div>
+    <span class="badge {{ pet.species }}">{{ pet.species }}</span>
+    <h1 class="detail-name">{{ pet.name }}</h1>
+    <div class="detail-date">Added {{ pet.created_at.strftime('%B %d, %Y') }}</div>
+    <div class="facts">
+      {% if pet.breed %}<div class="fact"><label>Breed</label><span>{{ pet.breed }}</span></div>{% endif %}
+      {% if pet.age %}<div class="fact"><label>Age</label><span>{{ pet.age }} yr</span></div>{% endif %}
+      {% if pet.owner %}
+        <div class="fact"><label>Owner</label><span>{{ pet.owner.name }}</span></div>
+        {% if pet.owner.email %}<div class="fact"><label>Contact</label><span><a href="mailto:{{ pet.owner.email }}" style="color:var(--accent)">{{ pet.owner.email }}</a></span></div>{% endif %}
+        {% if pet.owner.phone %}<div class="fact"><label>Phone</label><span>{{ pet.owner.phone }}</span></div>{% endif %}
+      {% endif %}
+    </div>
+    {% if pet.bio %}<p class="bio">{{ pet.bio }}</p>{% endif %}
+    <div class="btn-row">
+      <a href="{{ url_for('edit_pet', pet_id=pet.id) }}" class="btn btn-ghost">✏️ Edit</a>
+      <form method="post" action="{{ url_for('delete_pet', pet_id=pet.id) }}"
+            onsubmit="return confirm('Remove {{ pet.name }} from the directory?')">
+        <button type="submit" class="btn btn-danger btn-sm">🗑 Remove</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

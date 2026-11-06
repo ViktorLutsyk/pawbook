@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Directory — PawBook{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Meet the Pets</h1>
+  <p>{{ pets|length }} profile{{ 's' if pets|length != 1 else '' }} registered</p>
+</div>
+<form class="search-bar" method="get">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search by name…">
+  <select name="species" onchange="this.form.submit()">
+    <option value="">All species</option>
+    <option value="dog"   {% if species=='dog'   %}selected{% endif %}>🐕 Dogs</option>
+    <option value="cat"   {% if species=='cat'   %}selected{% endif %}>🐈 Cats</option>
+    <option value="other" {% if species=='other' %}selected{% endif %}>🐾 Other</option>
+  </select>
+  <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  {% if q or species %}<a href="{{ url_for('index') }}" class="btn btn-ghost btn-sm">✕ Clear</a>{% endif %}
+</form>
+{% if pets %}
+<div class="grid">
+  {% for p in pets %}
+  <a class="card" href="{{ url_for('pet_detail', pet_id=p.id) }}">
+    {% if p.photo_url %}<img class="card-photo" src="{{ p.photo_url }}" alt="{{ p.name }}" loading="lazy">
+    {% else %}<div class="card-placeholder">{{ p.species_emoji() }}</div>{% endif %}
+    <div class="card-body">
+      <div class="card-name">{{ p.name }}</div>
+      <div class="card-sub">{% if p.breed %}{{ p.breed }}{% endif %}{% if p.age %} · {{ p.age|int }} yr{% endif %}</div>
+      {% if p.owner %}<div class="card-sub">👤 {{ p.owner.name }}</div>{% endif %}
+      <span class="badge {{ p.species }}">{{ p.species }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <div class="icon">🐾</div>
+  <h3>No pets here yet</h3>
+  <p style="margin-bottom:1.5rem">{% if q or species %}No results — try clearing the filters.{% else %}Add the first furry friend!{% endif %}</p>
+  <a href="{{ url_for('add_pet') }}" class="btn btn-primary">Add the First Pet</a>
+</div>
+{% endif %}
+{% endblock %}
