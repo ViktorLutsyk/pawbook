@@ -1,0 +1,37 @@
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pawbook-db
+    environment:
+      POSTGRES_DB: pawbook
+      POSTGRES_USER: pawbook
+      POSTGRES_PASSWORD: pawbook123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pawbook"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    container_name: pawbook-web
+    environment:
+      DATABASE_URL: postgresql://pawbook:pawbook123@db:5432/pawbook
+      SECRET_KEY: pawbook-local-secret
+      PORT: 10000
+    ports:
+      - "5000:10000"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads_data:
